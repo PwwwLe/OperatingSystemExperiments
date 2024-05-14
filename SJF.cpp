@@ -9,39 +9,39 @@
 
 using namespace std;
 
-// 按到达时间排序
-bool sortByArrivalTime(const PCB &a, const PCB &b) {
-    return a.getArrivalTime() < b.getArrivalTime();
-}
-
-// 按运行时间排序
-bool sortByBurstTime(const PCB &a, const PCB &b) {
-    return a.getBurstTime() < b.getBurstTime();
-}
-
 SJF::SJF(vector<PCB> proc) : processes(proc) {
 }
 
 vector<PCB> SJF::schedule() {
     vector<PCB> processQueue = processes;
 
-    sort(processQueue.begin(), processQueue.end(), sortByArrivalTime);
+    // 按照到达时间对序列进行排序
+    sort(processQueue.begin(), processQueue.end(), [](const PCB &a, const PCB &b) {
+        return a.getArrivalTime() < b.getArrivalTime();
+    });
 
     int currentTime = 0;
 
+    // 就绪队列
     vector<PCB> readyQueue;
 
+    // 结束队列
     vector<PCB> finishedProcesses;
 
     while (!processQueue.empty() || !readyQueue.empty()) {
+        // 到达的进程加入就绪队列
         while (!processQueue.empty() && processQueue.front().getArrivalTime() <= currentTime) {
             readyQueue.push_back(processQueue.front());
             processQueue.erase(processQueue.begin());
         }
 
-        sort(readyQueue.begin(), readyQueue.end(), sortByBurstTime);
+        // 将就绪队列按照执行时间排序
+        sort(readyQueue.begin(), readyQueue.end(), [](const PCB &a, const PCB &b) {
+            return a.getBurstTime() < b.getBurstTime();
+        });
 
         if (!readyQueue.empty()) {
+            // 模拟进程执行
             PCB currentProcess = readyQueue.front();
             readyQueue.erase(readyQueue.begin());
 

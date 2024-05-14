@@ -1,15 +1,14 @@
 #include "PCB.h"
 #include "FCFS.h"
 #include "SJF.h"
+#include "RR.h"
+#include "MLFQ.h"
 #include "PerformanceMetrics.h"
 #include <iostream>
 #include <vector>
 #include <cstdlib>
 #include <ctime>
 #include <iomanip>
-
-#include "RR.h"
-
 
 using namespace std;
 
@@ -101,6 +100,12 @@ int main() {
     RR rrScheduler(testData, 5);
     vector<PCB> rrFinishedProcesses = rrScheduler.schedule();
     display(rrFinishedProcesses);
+
+    cout << "MLFQ Algorithms: " << endl;
+    vector<int> quantums = {2, 4, 6};
+    MLFQ mlfqScheduler(3, testData, quantums);
+    vector<PCB> mlfqFinishedProcesses = mlfqScheduler.schedule();
+    display(mlfqFinishedProcesses);
 
     return 0;
 }

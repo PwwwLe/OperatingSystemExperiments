@@ -12,17 +12,21 @@ RR::RR(const vector<PCB> &processes, int q) : processes(processes), quantum(q) {
 
 vector<PCB> RR::schedule() {
     vector<PCB> readyQueue = processes;
+
+    // 按照到达时间对序列排序
     sort(readyQueue.begin(), readyQueue.end(), [](const PCB& a, const PCB& b) {
         return a.getArrivalTime() < b.getArrivalTime();
     });
 
     int currentTime = 0;
-    vector<PCB> finishedProcesses;
+    // 结束队列
+    vector<PCB> finishProcesses;
 
     while (!readyQueue.empty()) {
         PCB currentProcess = readyQueue.front();
         readyQueue.erase(readyQueue.begin());
 
+        // 计算执行时间
         int exeTime = min(currentProcess.getRemainingTime(), quantum);
         currentTime = max(currentTime, currentProcess.getArrivalTime());
 
@@ -32,6 +36,7 @@ vector<PCB> RR::schedule() {
 
         currentTime += exeTime;
 
+        // 更新剩余时间
         currentProcess.setRemainingTime(currentProcess.getRemainingTime() - exeTime);
 
         if (currentProcess.getRemainingTime() > 0) {
@@ -41,8 +46,8 @@ vector<PCB> RR::schedule() {
             currentProcess.setWaitingTime(
                 currentProcess.getFinishTime() - currentProcess.getArrivalTime() - currentProcess.getBurstTime());
             currentProcess.setTurnaroundTime(currentProcess.getFinishTime() - currentProcess.getArrivalTime());
-            finishedProcesses.push_back(currentProcess);
+            finishProcesses.push_back(currentProcess);
         }
     }
-    return finishedProcesses;
+    return finishProcesses;
 }
