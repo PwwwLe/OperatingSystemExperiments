@@ -21,7 +21,7 @@
 
 using namespace std;
 
-void printDivider(char fillChar = '-', int width = 50) {
+void printDivider(char fillChar = '-', int width = 150) {
     cout << setfill(fillChar) << setw(width) << fillChar << setfill(' ') << endl;
 }
 
@@ -90,7 +90,7 @@ void userInterface(FileSystem &fs) {
         cout << endl << "请输入命令（输入 'help' 查看帮助， 'exit' 退出）： " << endl;
         getline(cin, command);
 
-        if (command == 'exit') {
+        if (command == "exit") {
             break;
         }
 
@@ -99,76 +99,69 @@ void userInterface(FileSystem &fs) {
         iss >> cmd >> arg1 >> arg2 >> arg3 >> arg4;
 
         try {
-            if (cmd == 'create') {
-                switch (cmd) {
-                    case "create": {
-                        switch (arg1) {
-                            case "file": {
-                                if (arg4.empty()) {
-                                    cout << "错误：缺少文件权限参数" << endl;
-                                    continue;
-                                }
-                                fs.createFile(arg2, arg3, arg4);
-                            }
-                            case "dir": {
-                                fs.createDirectory(arg2, arg3);
-                            }
-                            default:
-                                cout << "无效的命令参数" << endl;
-                        }
+            if (cmd == "create") {
+                if (arg1 == "file") {
+                    if (arg4.empty()) {
+                        cout << "错误：缺少文件权限参数" << endl;
+                        continue;
                     }
-                    case "open": {
-                        if (arg1 == "file") {
-                            int fd = fs.openFile(arg2, arg3);
-                            cout << "文件描述符：" << fd << endl;
-                        } else {
-                            cout << "无效的命令参数" << endl;
-                        }
-                    }
-                    case "close": {
-                        int fd = stoi(arg1);
-                        fs.closeFile(fd);
-                    }
-                    case "read": {
-                        int fd = stoi(arg1);
-                        fs.readFile(fd);
-                    }
-                    case "write": {
-                        int fd = stoi(arg1);
-                        fs.writeFile(fd, arg2);
-                    }
-                    case "delete": {
-                        switch (arg1) {
-                            case "file": {
-                                fs.deleteFile(arg2, arg3);
-                            }
-                            case "dir": {
-                                fs.deleteDirectory(arg2, arg3);
-                            }
-                            default:
-                                cout << "无效的命令参数" << endl;
-                        }
-                    }
-                    case "list": {
-                        fs.listDirectory(arg1);
-                    }
-                    case "help": {
-                        cout << "可用命令： " << endl;
-                        cout << "create file <路径：path> <文件名：fileName> <访问权限：permissions>：在指定目录中创建文件" << endl;
-                        cout << "create dir <路径：path> <目录名：dirName>：在指定目录中创建子目录" << endl;
-                        cout << "open file <路径：path> <文件名：fileName>：打开指定文件并返回文件描述符" << endl;
-                        cout << "close <文件描述符：fileDescriptor>：关闭指定文件描述符" << endl;
-                        cout << "read <文件描述符：fileDescriptor>：从指定文件描述符中读取数据" << endl;
-                        cout << "write <文件描述符：fileDescriptor> <写入的数据：data>：向指定文件描述符中写入数据" << endl;
-                        cout << "delete file <路径：path> <文件名：fileName>：删除指定文件" << endl;
-                        cout << "delete dir <路径：path> <目录名：dirName>：删除指定目录" << endl;
-                        cout << "list <路径：path>：列出指定目录中的文件和子目录" << endl;
-                        cout << "help：显示帮助信息" << endl;
-                        cout << "exit：退出程序" << endl;
-                    }
-                    default:
-                        cout << "无效命令" << endl;
+                    fs.createFile(arg2, arg3, arg4);
+                } else if (arg1 == "dir") {
+                    fs.createDirectory(arg2, arg3);
+                } else {
+                    cout << "无效的命令参数" << endl;
                 }
+            } else if (cmd == "open") {
+                if (arg1 == "file") {
+                    int fd = fs.openFile(arg2, arg3);
+                    cout << "文件描述符：" << fd << endl;
+                } else {
+                    cout << "无效的命令参数" << endl;
+                }
+            } else if (cmd == "close") {
+                int fd = stoi(arg1);
+                fs.closeFile(fd);
+            } else if (cmd == "read") {
+                int fd = stoi(arg1);
+                fs.readFile(fd);
+            } else if (cmd == "write") {
+                int fd = stoi(arg1);
+                fs.writeFile(fd, arg2);
+            } else if (cmd == "delete") {
+                if (arg1 == "file") {
+                    fs.deleteFile(arg2, arg3);
+                } else if (arg1 == "dir") {
+                    fs.deleteDirectory(arg2, arg3);
+                } else {
+                    cout << "无效的命令参数" << endl;
+                }
+            } else if (cmd == "list") {
+                fs.listDirectory(arg1);
+            } else if (cmd == "help") {
+                printDivider();
+                cout << left << setw(15) << "cmd" << setw(40) << "arg1" << setw(30) << "arg2" << setw(30) << "arg3" <<
+                        setw(30) << "arg4" << endl;
+                printDivider();
+                cout << left << setw(15) << "create" << setw(40) << "file" << setw(30) << "<路径：path>" << setw(30) <<
+                        "<文件名：fileName>" << setw(30) << "<访问权限：permissions>" << endl;
+                cout << left << setw(15) << "create" << setw(40) << "dir" << setw(30) << "<路径：path>" << setw(30) <<
+                        "<目录名：dirName>" << endl;
+                cout << left << setw(15) << "open" << setw(40) << "file" << setw(30) << "<路径：path>" << setw(30) <<
+                        "<文件名：fileName>" << endl;
+                cout << left << setw(15) << "close" << setw(40) << "<文件描述符：fileDescriptor>" << endl;
+                cout << left << setw(15) << "read" << setw(40) << "<文件描述符：fileDescriptor>" << endl;
+                cout << left << setw(15) << "write" << setw(40) << "<文件描述符：fileDescriptor>" << setw(30) << setw(30) << "<数据：data>"
+                        << endl;
+                cout << left << setw(15) << "delete" << setw(40) << "file" << setw(30) << "<路径：path>" << setw(30) <<
+                        "<文件名：fileName>" << endl;
+                cout << left << setw(15) << "delete" << setw(40) << "dir" << setw(30) << "<路径：path>" << setw(30) <<
+                        "<目录名：dirName>" << endl;
+                cout << left << setw(15) << "list" << setw(40) << "<路径：path>" << endl;
+                cout << left << setw(15) << "help" << endl;
+                cout << left << setw(15) << "exit" << endl;
+                printDivider();
+            } else {
+                cout << "无效命令" << endl;
             }
         } catch (const exception &e) {
             cout << "错误：" << e.what() << endl;
@@ -179,7 +172,7 @@ void userInterface(FileSystem &fs) {
 int main() {
     // Experiment 1:
 
-    int numProcesses = 10;
+    // int numProcesses = 10;
     /*
     vector<PCB> testData = generateTestData(numProcesses);
     */
